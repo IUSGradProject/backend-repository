@@ -1,0 +1,14 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/BE/.vs
+/BE/bin
+/BE/obj
+/DAL/obj
+/DLL/bin/Debug/net8.0
+/DLL/obj
+/DTOs/bin/Debug/net8.0
+/DTOs/obj
+/DAL/bin/Debug/net8.0
+/BE/appsettings.json

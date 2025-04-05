@@ -1,0 +1,6 @@
+@BE_HostAddress = http://localhost:5014
+
+GET {{BE_HostAddress}}/Ecommerce-store/
+Accept: application/json
+
+###
