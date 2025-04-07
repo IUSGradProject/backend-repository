@@ -87,5 +87,22 @@ namespace APIs.Repository
             await _context.Carts.AddAsync(cart);
             await _context.SaveChangesAsync();
         }
+
+        public async Task DeactivateUserAsync(string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+                throw new KeyNotFoundException($"User with email '{email}' not found.");
+
+            user.IsDeleted = true;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        {
+            return await _context.Users.ToListAsync();
+        }
+
     }
 }

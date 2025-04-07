@@ -15,5 +15,7 @@ namespace BLL.Services.Interface
         Task<IEnumerable<User>> GetInactiveUsers(DateTime dateTime);
 
         Task LogUserActivity(string email);
+        Task DeactivateUserAsync(string email);
+        Task<IEnumerable<User>> GetAllUsersAsync();
     }
 }

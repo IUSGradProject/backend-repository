@@ -13,5 +13,9 @@ namespace APIs.Repository.Interface
         Task LogUserActivity(string email);
 
         Task<Role> GetRole(string email);
+        Task DeactivateUserAsync(string email);
+        Task<IEnumerable<User>> GetAllUsersAsync();
+
+
     }
 }
