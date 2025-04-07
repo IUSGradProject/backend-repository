@@ -18,6 +18,9 @@ public partial class User
     public string LastName { get; set; } = null!;
 
     public DateTime? LastRequest { get; set; }
+    public string? Username { get; set; } 
+
+    public bool IsDeleted { get; set; } = false;
 
     public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
 

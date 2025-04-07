@@ -27,18 +27,30 @@ namespace APIs.Controllers
         [HttpPost]
         public async Task<ActionResult> PostUser([FromBody]CreateUserRequest user)
         {
-            var token = await _userService.CreateUser(user);
-
-            var cookieOptions = new CookieOptions
+            try
             {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTime.UtcNow.AddHours(12)
-            };
-            Response.Cookies.Append("jwt", token, cookieOptions);
+                var token = await _userService.CreateUser(user);
 
-            return Ok(await _userService.GetRole(user.Email));
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.UtcNow.AddHours(12)
+                };
+                Response.Cookies.Append("jwt", token, cookieOptions);
+
+                return Ok(await _userService.GetRole(user.Email));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    StatusCode = 500,
+                    Message = "An error occurred while processing your request.",
+                    Detailed = ex.Message
+                });
+            }
         }
 
         // PUT: Users/Login
@@ -75,5 +87,28 @@ namespace APIs.Controllers
 
             return Ok(new { message = "Logout successful" });
         }
+
+        // DELETE: Users/deactivate/{email}
+        [HttpDelete("deactivate/{email}")]
+        public async Task<IActionResult> DeactivateUser(string email)
+        {
+            await _userService.DeactivateUserAsync(email);
+            return Ok(new { message = "User deactivated successfully." });
+        }
+
+        // GET: Users/all
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+        {
+            var users = await _userService.GetAllUsersAsync();
+
+            if (users == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(users);
+        }
+
     }
 }

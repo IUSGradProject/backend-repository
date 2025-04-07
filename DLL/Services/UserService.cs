@@ -26,6 +26,11 @@ namespace BLL.Services
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             var model = _mapper.Map<User>(user);
             model.RoleId = 5;
+            model.IsDeleted = false;
+            if (string.IsNullOrWhiteSpace(model.Username))
+            {
+                model.Username = null; // Or derive a username from email if needed
+            }
             await _userRepository.CreateUser(model);
 
             var createdUser = await _userRepository.GetUserByEmailAsync(user.Email);
@@ -66,6 +71,16 @@ namespace BLL.Services
         public async Task LogUserActivity(string email)
         {
             await _userRepository.LogUserActivity(email);
+        }
+
+        public async Task DeactivateUserAsync(string email)
+        {
+            await _userRepository.DeactivateUserAsync(email);
+        }
+
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        {
+            return await _userRepository.GetAllUsersAsync();
         }
     }
 }
