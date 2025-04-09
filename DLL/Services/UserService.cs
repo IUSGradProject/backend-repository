@@ -54,6 +54,15 @@ namespace BLL.Services
         public async Task<LoginResponse> Login(LoginRequest loginRequest)
         {
             var user = _userRepository.GetUserByEmailAsync(loginRequest.Email).Result;
+            if (user == null)
+            {
+                throw new Exception("Invalid email or password.");
+            }
+
+            if (user.IsDeleted)
+            {
+                throw new Exception("This account has been deactivated. Please contact support.");
+            }
 
             if (BCrypt.Net.BCrypt.Verify(loginRequest.Password, user.Password))
             {

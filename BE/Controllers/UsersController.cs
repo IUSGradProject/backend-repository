@@ -57,18 +57,29 @@ namespace APIs.Controllers
         [HttpPut("Login")]
         public async Task<ActionResult> Login([FromBody] LoginRequest loginRequest)
         {
-            var loginResponse = await _userService.Login(loginRequest);
-
-            var cookieOptions = new CookieOptions
+            try
             {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTime.UtcNow.AddHours(12)
-            };
-            Response.Cookies.Append("jwt", loginResponse.Token, cookieOptions);
+                var loginResponse = await _userService.Login(loginRequest);
 
-            return Ok(loginResponse);
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.UtcNow.AddHours(12)
+                };
+                Response.Cookies.Append("jwt", loginResponse.Token, cookieOptions);
+
+                return Ok(loginResponse);
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("deactivated"))
+                {
+                    return Unauthorized(new { message = ex.Message });
+                }
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         // GET: Users/Logout
