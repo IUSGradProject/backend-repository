@@ -25,8 +25,17 @@ namespace BLL.Services
 
         public EmailService(IConfiguration configuration, IServiceProvider serviceProvider)
         {
+
+    _smtpServer = configuration["EmailSettings:SMTPServer"];
+    
+    var smtpPortStr = configuration["EmailSettings:SMTPPort"];
+    if (string.IsNullOrWhiteSpace(smtpPortStr) || !int.TryParse(smtpPortStr, out _smtpPort))
+    {
+        throw new ArgumentException("SMTPPort is missing or not a valid number in configuration.");
+    }
+
+
             _smtpServer = configuration["EmailSettings:SMTPServer"];
-            _smtpPort = int.Parse(configuration["EmailSettings:SMTPPort"]);
             _username = configuration["EmailSettings:Username"];
             _password = configuration["EmailSettings:Password"];
             _fromEmail = configuration["EmailSettings:FromEmail"];

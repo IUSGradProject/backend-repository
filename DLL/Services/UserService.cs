@@ -25,7 +25,7 @@ namespace BLL.Services
         {
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             var model = _mapper.Map<User>(user);
-            model.RoleId = 5;
+            model.RoleId = 1;
             model.IsDeleted = false;
             if (string.IsNullOrWhiteSpace(model.Username))
             {
