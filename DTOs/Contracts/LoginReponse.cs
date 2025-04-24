@@ -12,14 +12,17 @@ namespace DTOs.Contracts
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string? Username { get; set; }
         public string Role { get; set; } 
 
-        public LoginResponse(string token, string email, string firstName, string lastName, string role)
+        public LoginResponse(string token, string email, string firstName, string lastName,string username, string role)
         {
+
             Token = token;
             Email = email;
             FirstName = firstName;
             LastName = lastName;
+            Username = username;
             Role = role;
         }
     }

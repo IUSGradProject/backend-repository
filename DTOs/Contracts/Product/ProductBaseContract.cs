@@ -11,6 +11,8 @@ namespace DTOs.Contracts.Product
         public Guid ProductId { get; set; }
         public string Name { get; set; }
         public float Price { get; set; }
+        public string Image { get; set; }
+        public string? Description { get; set; }
         public bool IsDeleted { get; set; }
         public int SoldItems { get; set; }
         public int Available { get; set; }
