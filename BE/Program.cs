@@ -89,14 +89,14 @@ var mapperConfig = new MapperConfiguration(mc =>
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-        policy.WithOrigins("http://localhost:4200" , "https://heyappo.me")
-              .AllowCredentials()
-              .AllowAnyMethod()
-              .AllowAnyHeader());
-});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowAll", policy =>
+//        policy.WithOrigins("http://localhost:4200" , "https://heyappo.me")
+//              .AllowCredentials()
+//              .AllowAnyMethod()
+//              .AllowAnyHeader());
+//});
 
 var app = builder.Build();
 
@@ -107,7 +107,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAll");
+//app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
