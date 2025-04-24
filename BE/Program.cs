@@ -93,13 +93,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAuroraOrigins", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:4200",           
-                "https://aurora.heyappo.me"        
-            )
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials(); 
+        policy.AllowAnyOrigin()          
+           .AllowAnyHeader()            
+           .AllowAnyMethod()            
+           .AllowCredentials();
     });
 });
 
