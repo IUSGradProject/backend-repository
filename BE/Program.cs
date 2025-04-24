@@ -89,16 +89,16 @@ var mapperConfig = new MapperConfiguration(mc =>
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAuroraOrigins", policy =>
-    {
-        policy.WithOrigins( "https://aurora.heyappo.me")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
-    });
-});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowAuroraOrigins", policy =>
+//    {
+//        policy.WithOrigins( "https://aurora.heyappo.me")
+//              .AllowAnyHeader()
+//              .AllowAnyMethod()
+//              .AllowCredentials();
+//    });
+//});
 
 
 var app = builder.Build();
@@ -110,7 +110,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAuroraOrigins");
+//app.UseCors("AllowAuroraOrigins");
 
 app.UseHttpsRedirection();
 
