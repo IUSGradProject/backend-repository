@@ -70,7 +70,7 @@ namespace BLL.Services
 
                 var role = user.Role?.Role1;
 
-                return new LoginResponse(token, user.Email, user.FirstName, user.LastName, role);
+                return new LoginResponse(token, user.Email, user.FirstName, user.LastName, user.Username, role);
 
             }
 
