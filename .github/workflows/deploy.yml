@@ -20,7 +20,7 @@ jobs:
           dotnet-version: '8.0.x' # Adjust if needed
 
       - name: Publish .NET app
-        working-directory: backend-repository/BE
+        working-directory: BE
         run: dotnet publish -c Release -o published APIs.csproj
 
       - name: Clear temp deploy folder on server
