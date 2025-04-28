@@ -17,9 +17,10 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x' # Change if you're using a different .NET version
+          dotnet-version: '8.0.x' # Adjust if needed
 
       - name: Publish .NET app
+        working-directory: backend-repository/BE
         run: dotnet publish -c Release -o published APIs.csproj
 
       - name: Clear temp deploy folder on server
@@ -37,7 +38,7 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "published/*"
+          source: "backend-repository/BE/published/*"
           target: "/tmp/aurora-backend"
 
       - name: Deploy on server via SSH
