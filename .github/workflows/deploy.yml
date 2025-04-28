@@ -38,7 +38,7 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "backend-repository/BE/published/*"
+          source: "BE/published/*"
           target: "/tmp/aurora-backend"
 
       - name: Deploy on server via SSH
