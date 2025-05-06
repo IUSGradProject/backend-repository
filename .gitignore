@@ -12,3 +12,6 @@
 /DTOs/obj
 /DAL/bin/Debug/net8.0
 /BE/appsettings.json
+
+# Ignore environment-specific configuration files
+/BE/appsettings.Development.json

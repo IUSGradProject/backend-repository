@@ -75,7 +75,8 @@ builder.Services.AddHostedService<EmailService>();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -89,23 +90,23 @@ var mapperConfig = new MapperConfiguration(mc =>
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowAuroraOrigins", policy =>
-//    {
-//        policy.WithOrigins( "https://aurora.heyappo.me")
-//              .AllowAnyHeader()
-//              .AllowAnyMethod()
-//              .AllowCredentials();
-//    });
-//});
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularDev", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200") 
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseCors("AllowAngularDev");
     app.UseSwagger();
     app.UseSwaggerUI();
 }
