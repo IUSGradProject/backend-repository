@@ -81,9 +81,8 @@ namespace BLL.Services
                 Date = DateTime.UtcNow,
             });
 
-            for (int i = 0; i < cart.Cart.Count; i++){
-                var cartItem = cart.Cart[i];
-
+            foreach (var cartItem in cart.Cart)
+            {
                 await _productRepository.OrderProduct(cartItem.ProductId, cartItem.Quantity);
 
                 var cartProduct = _mapper.Map<CartProduct>(cartItem);
@@ -91,10 +90,27 @@ namespace BLL.Services
 
                 await _cartRepository.CreateCartProduct(cartProduct, reduceStock: false);
                 await _cartRepository.DeleteCartItem(email, cartItem.ProductId);
-                await _emailService.SendOrderConfirmationEmailAsync(email, cartItem.Name, cartItem.Price, cartItem.Quantity);
-
             }
+
+             // Fire-and-forget email sending (non-blocking)
+            _ = Task.Run(async () =>
+            {
+                foreach (var cartItem in cart.Cart)
+                {
+                    try
+                    {
+                    await _emailService.SendOrderConfirmationEmailAsync(
+                        email, cartItem.Name, cartItem.Price, cartItem.Quantity);
+                }
+                  catch (Exception ex)
+            {
+                // Optionally log the exception
+                Console.WriteLine($"Email sending failed: {ex.Message}");
+            }
+             }
+         });
         }
+
 
         public async Task DeleteCartItem(Guid productId)
         {
