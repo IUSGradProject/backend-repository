@@ -56,8 +56,9 @@ namespace BLL.Services
 
             var cartProduct = _mapper.Map<CartProduct>(cartItem);
             cartProduct.CartId = cart.CartId;
-            
-            await _cartRepository.CreateCartProduct(cartProduct);
+
+            await _cartRepository.CreateCartProduct(cartProduct, reduceStock: false);
+
         }
 
         public async Task CreateCartProducts(CartRequest cartProduct)
