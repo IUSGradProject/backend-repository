@@ -47,18 +47,21 @@ namespace BLL.Services
                     UserId = user.UserId,
                     Paid = 0,
                 });
-            } else
-            {
-                var oldItem = await _cartRepository.GetCartByProductAndCart(cartItem.ProductId, cart.CartId);
-                if (oldItem != null && oldItem.Quantity > cartItem.Quantity)
-                    cartItem.Quantity = oldItem.Quantity;
+            } 
+            var existingItem = await _cartRepository.GetCartByProductAndCart(cartItem.productId, cart.CartId);
+
+            if(existingItem != null){
+                //Updating Quantity
+                existingItem.Quantity = cartItem.Quantity;
+                await _cartRepository.UpdateCartProduct(existingItem); // This method should be created 
             }
-
-            var cartProduct = _mapper.Map<CartProduct>(cartItem);
-            cartProduct.CartId = cart.CartId;
-
-            await _cartRepository.CreateCartProduct(cartProduct, reduceStock: false);
-
+            else
+            {
+                //Insert new product
+                var cartProduct = _mapper.Map<CartProduct>(cartItem);
+                cartProduct.CartId = cart.CartId;
+                await _cartRepository.CreateCartProduct(cartProduct, reduceStock: false);
+            }
         }
 
         public async Task CreateCartProducts(CartRequest cartProduct)

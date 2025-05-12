@@ -20,6 +20,14 @@ namespace DAL.Repository
             return cart;
         }
 
+
+        public async Task UpdateCartProduct(CartProduct product){
+            _context.CartProduct.Update(product);
+            await _dbContext.SaveChangesAsync();
+        }
+
+
+
         public async Task CreateCartProduct(CartProduct cartProduct, bool reduceStock = true)
         {
             var item = await _context.CartProducts
