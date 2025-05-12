@@ -23,7 +23,7 @@ namespace DAL.Repository
 
         public async Task UpdateCartProduct(CartProduct product){
             _context.CartProduct.Update(product);
-            await _dbContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
 
