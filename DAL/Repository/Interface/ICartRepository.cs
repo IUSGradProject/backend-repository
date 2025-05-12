@@ -11,6 +11,7 @@ namespace DAL.Repository.Interface
     {
         Task CreateCartProduct(CartProduct cartProduct, bool reduceStock = true);
 
+        Task UpdateCartProduct(CartProduct product);
 
         Task DeleteCartItem(string userEmail, Guid productId);
 
