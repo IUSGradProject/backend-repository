@@ -48,7 +48,7 @@ namespace BLL.Services
                     Paid = 0,
                 });
             } 
-            var existingItem = await _cartRepository.GetCartByProductAndCart(cartItem.productId, cart.CartId);
+            var existingItem = await _cartRepository.GetCartByProductAndCart(cartItem.ProductId, cart.CartId);
 
             if(existingItem != null){
                 //Updating Quantity
