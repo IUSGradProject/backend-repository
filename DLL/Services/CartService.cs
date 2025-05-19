@@ -51,8 +51,9 @@ namespace BLL.Services
             var existingItem = await _cartRepository.GetCartByProductAndCart(cartItem.ProductId, cart.CartId);
 
             if(existingItem != null){
-                return;
-                    }
+                existingItem.Quantity = cartItem.Quantity;
+                await _cartRepository.UpdateCartProduct(existingItem);
+            }
             else
             {
                 var cartProduct = _mapper.Map<CartProduct>(cartItem);
