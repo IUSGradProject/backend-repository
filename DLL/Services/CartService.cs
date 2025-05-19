@@ -51,13 +51,11 @@ namespace BLL.Services
             var existingItem = await _cartRepository.GetCartByProductAndCart(cartItem.ProductId, cart.CartId);
 
             if(existingItem != null){
-                //Updating Quantity
-                existingItem.Quantity = cartItem.Quantity;
-                await _cartRepository.UpdateCartProduct(existingItem); // This method should be created 
+                existingItem.Quantity += cartItem.Quantity;
+                await _cartRepository.UpdateCartProduct(existingItem); 
             }
             else
             {
-                //Insert new product
                 var cartProduct = _mapper.Map<CartProduct>(cartItem);
                 cartProduct.CartId = cart.CartId;
                 await _cartRepository.CreateCartProduct(cartProduct, reduceStock: false);
@@ -76,13 +74,15 @@ namespace BLL.Services
         {
             var email = _tokenService.GetEmail();
             var user = await _userRepository.GetUserByEmailAsync(email);
+            var utcNow = DateTime.UtcNow;
+            var localOrderTime = utcNow.AddHours(2);
 
             var newCart = await _cartRepository.CreateCart(new Cart
             {
                 CartId = Guid.NewGuid(),
                 UserId = user.UserId,
                 Paid = 1,
-                Date = DateTime.UtcNow,
+                Date = utcNow,
             });
 
             foreach (var cartItem in cart.Cart)
@@ -136,7 +136,14 @@ namespace BLL.Services
             var user = await _userRepository.GetUserByEmailAsync(email);
 
             var orders = await _cartRepository.GetOrdersByUserId(user.UserId);
-            var mappedOrders = _mapper.Map<List<OrderItemContract>>(orders);
+            var mappedOrders = orders.Select(o =>
+            {
+                var localOrderDate = o.Cart.Date.Value.AddHours(2); 
+                return _mapper.Map<OrderItemContract>(o, opt => opt.AfterMap((src, dest) =>
+                {
+                    dest.OrderDate = localOrderDate;
+                }));
+            }).ToList();
             var groupedOrders = mappedOrders.GroupBy(c => c.OrderDate).OrderByDescending(g => g.Key).ToList();
 
             var responseData = groupedOrders.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
