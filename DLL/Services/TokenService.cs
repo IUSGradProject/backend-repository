@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace BLL.Services
         private readonly string _audience;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IConfiguration _configuration;
-
+        private static readonly ConcurrentDictionary<string, DateTime> _invalidatedTokens = new();
         public TokenService(IHttpContextAccessor httpContext, IConfiguration configuration)
         {
             _configuration = configuration;
@@ -81,6 +82,57 @@ namespace BLL.Services
             var role = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 
             return role;
+        }
+
+         public void InvalidateToken(string token)
+        {
+            _invalidatedTokens.TryAdd(token, DateTime.UtcNow);
+        }
+
+        public bool IsTokenInvalidated(string token)
+        {
+            return _invalidatedTokens.ContainsKey(token) || !ValidateToken(token);
+        }
+
+        public void CleanupExpiredTokens()
+        {
+            var now = DateTime.UtcNow;
+            foreach (var kvp in _invalidatedTokens.Where(kvp => kvp.Value.AddHours(1) < now).ToList())
+            {
+                _invalidatedTokens.TryRemove(kvp.Key, out _);
+            }
+        }
+
+        public bool ValidateToken(string token)
+        {
+            try
+            {
+                if (IsTokenInvalidated(token))
+                {
+                    return false;
+                }
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+                var handler = new JwtSecurityTokenHandler();
+
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = _issuer,
+                    ValidAudience = _audience,
+                    IssuerSigningKey = key
+                };
+
+                handler.ValidateToken(token, validationParameters, out _);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

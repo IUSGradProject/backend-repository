@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Data;
+using BLL.Services;
 
 
 namespace APIs.Controllers
@@ -17,10 +18,12 @@ namespace APIs.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ITokenService _tokenService;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, ITokenService tokenService)
         {
             _userService = userService;
+            _tokenService = tokenService;
         }
 
         // POST: Users
@@ -86,12 +89,18 @@ namespace APIs.Controllers
         [HttpGet("Logout")]
         public async Task<ActionResult> Logout()
         {
+            var token = Request.Cookies["jwt"];
+            if (!string.IsNullOrEmpty(token))
+            {
+                _tokenService.InvalidateToken(token);
+            }
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Expires = DateTime.UtcNow.AddDays(-1)
+                Expires = DateTime.UtcNow.AddDays(-1),
+                  Path = "/"
             };
 
             Response.Cookies.Append("jwt", string.Empty, cookieOptions);

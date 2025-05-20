@@ -14,5 +14,9 @@ namespace BLL.Services.Interface
         public string? GetEmail();
 
         public string GetRole();
+        void InvalidateToken(string token);
+        bool IsTokenInvalidated(string token);
+        void CleanupExpiredTokens();
+        bool ValidateToken(string token);
     }
 }
